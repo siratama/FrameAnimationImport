@@ -1,0 +1,24 @@
+-js download/FrameAnimationImport.jsfl
+-main FrameAnimationImport
+-cp src/jsfl
+-cp src/common
+-lib haxe-jsfl
+-D jsfl
+
+--next
+
+-js deploy/lib/FrameAnimationImport.jsfl
+-main FrameAnimationImport
+-cp src/jsfl
+-cp src/common
+-lib haxe-jsfl
+
+#--next
+#
+#-js deploy/index.js
+#-main ExtensionIndex
+#-cp src/common
+#-cp src/extension
+#-cp C:\googledrive\workspace\MyHaxelib\haxelib\src\adobe_extension
+#-lib jQueryExtern
+#-lib haxe-jsfl
