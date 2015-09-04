@@ -71,7 +71,6 @@ var FrameAnimationImport = $hx_exports.FrameAnimationImport = function() {
 };
 FrameAnimationImport.__name__ = true;
 FrameAnimationImport.main = function() {
-	new FrameAnimationImport();
 };
 var JsonReader = function() { };
 JsonReader.__name__ = true;
@@ -98,7 +97,6 @@ var Test = function(document,layerStructure) {
 	this.layerStructure = layerStructure;
 	this.document = document;
 	this.library = document.library;
-	this.timeline = document.getTimeline();
 };
 Test.__name__ = true;
 Test.prototype = {
@@ -106,25 +104,30 @@ Test.prototype = {
 		var psdFileName = "test_movieclip";
 		this.library.addNewItem(jsfl.ItemType.MOVIE_CLIP,psdFileName);
 		this.library.editItem();
-		this.createLayerFrame();
-	}
-	,createLayerFrame: function() {
-		this.timeline.insertFrames(this.layerStructure.length,true);
+		var timeline = this.document.getTimeline();
 		var _g1 = 0;
 		var _g = this.layerStructure.length;
 		while(_g1 < _g) {
 			var frameIndex = _g1++;
 			var photoshopLayerSet = this.layerStructure[frameIndex];
+			timeline.selectAllFrames();
+			timeline.insertKeyframe(frameIndex);
 			var _g3 = 0;
 			var _g2 = photoshopLayerSet.length;
 			while(_g3 < _g2) {
 				var elementIndex = _g3++;
 				var photoshopLayer = photoshopLayerSet[elementIndex];
-				var layerIndexSet = this.timeline.findLayerIndex(photoshopLayer.name);
+				var layerIndexSet = timeline.findLayerIndex(photoshopLayer.name);
 				var layerIndex;
-				if(layerIndexSet == null) layerIndex = this.timeline.addNewLayer(photoshopLayer.name,jsfl.LayerType.NORMAL,false); else layerIndex = layerIndexSet[0];
-				this.timeline.currentLayer = layerIndex;
-				var layer = this.timeline.layers[layerIndex];
+				if(layerIndexSet == null) layerIndex = timeline.addNewLayer(photoshopLayer.name,jsfl.LayerType.NORMAL,false); else layerIndex = layerIndexSet[0];
+				timeline.currentLayer = layerIndex;
+				var layer = timeline.layers[layerIndex];
+				var libraryItemPath = ["frame_animation_export",photoshopLayer.directory,photoshopLayer.name].join("/");
+				this.library.addItemToDocument({ x : 0, y : 0},libraryItemPath);
+				var element = layer.frames[frameIndex].elements[elementIndex];
+				element.x = photoshopLayer.x;
+				element.y = photoshopLayer.y;
+				return;
 			}
 		}
 	}
@@ -138,11 +141,24 @@ haxe.Log.trace = function(v,infos) {
 var js = {};
 js.Boot = function() { };
 js.Boot.__name__ = true;
+js.Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
 js.Boot.__trace = function(v,i) {
 	var msg;
 	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
 	msg += js.Boot.__string_rec(v,"");
-	fl.trace(msg);
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js.Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
 };
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
