@@ -75,7 +75,7 @@ var FrameAnimationImport = $hx_exports.FrameAnimationImport = function(layerMerg
 };
 FrameAnimationImport.__name__ = true;
 FrameAnimationImport.main = function() {
-	new FrameAnimationImport(false);
+	new FrameAnimationImport(true);
 };
 var JsonReader = function() { };
 JsonReader.__name__ = true;
@@ -208,11 +208,24 @@ haxe.Log.trace = function(v,infos) {
 var js = {};
 js.Boot = function() { };
 js.Boot.__name__ = true;
+js.Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
 js.Boot.__trace = function(v,i) {
 	var msg;
 	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
 	msg += js.Boot.__string_rec(v,"");
-	fl.trace(msg);
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js.Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
 };
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";

@@ -6,7 +6,7 @@ import jsfl.Document;
 import lib.FileDirectory;
 import lib.Directory;
 
-class AssetsLoader
+class AssetsImport
 {
 	private var document:Document;
 	private var library:Library;
@@ -36,7 +36,7 @@ class AssetsLoader
 
 		var directoryPath:String = assetsDirectoryPath + relativeDirectoryPath;
 
-		var folderPath = FileDirectory.OUTPUT_DIRECTORY + relativeDirectoryPath;
+		var folderPath = [FileDirectory.OUTPUT_DIRECTORY, FileDirectory.ASSETS_DIRECTORY].join(FileDirectory.PATH_COLUMN) + relativeDirectoryPath;
 		var bitmapFolderPath = [folderPath, FileDirectory.BITMAP_DIRECTORY].join(FileDirectory.PATH_COLUMN);
 		createFolder(folderPath);
 		createFolder(bitmapFolderPath);

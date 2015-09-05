@@ -12,10 +12,12 @@ class FrameAnimationImport
 
 	public static function main(){
 		#if jsfl
-		new FrameAnimationImport();
+		new FrameAnimationImport(false);
+		#elseif jsfl_mergence
+		new FrameAnimationImport(true);
 		#end
 	}
-	public function new()
+	public function new(layerMergence:Bool)
 	{
 		if(Lib.fl.getDocumentDOM() == null) return;
 		Lib.fl.trace("--- FrameAnimationImport ---");
@@ -24,19 +26,26 @@ class FrameAnimationImport
 		if(frameAnimationExportFolerURI == null){
 			return;
 		}
-
-		var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
-		if(directoryStructure == null){
-			Lib.fl.trace('not found: ${FileDirectory.getDirectoryStructureDefaultFilePath(frameAnimationExportFolerURI)}}}');
+		var information = JsonReader.getInformation(frameAnimationExportFolerURI);
+		if(information == null){
+			Lib.fl.trace('not found: ${FileDirectory.getInfomationFilePath(frameAnimationExportFolerURI)}}}');
 			return;
 		}
+		var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
 
 		var document = fl.getDocumentDOM();
-		var assetsLoader = new AssetsLoader(document, frameAnimationExportFolerURI, directoryStructure);
-		assetsLoader.execute();
+		var assetsImport = new AssetsImport(document, frameAnimationExportFolerURI, directoryStructure);
+		assetsImport.execute();
 
 		var layerStructure = JsonReader.getLayerStructure(frameAnimationExportFolerURI);
-		var test = new Test(document, layerStructure);
-		test.execute();
+		var layerIndex = JsonReader.getLayerIndex(frameAnimationExportFolerURI);
+
+		var movieClipCreation = new MovieClipCreation(information, document, layerStructure, layerIndex);
+		movieClipCreation.execute();
+
+		if(layerMergence)
+			LayerMargence.execute(document);
+
+		Lib.fl.trace("finish");
 	}
 }

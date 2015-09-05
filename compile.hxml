@@ -7,6 +7,15 @@
 
 --next
 
+-js download/FrameAnimationImportWithLayerMergence.jsfl
+-main FrameAnimationImport
+-cp src/jsfl
+-cp src/common
+-lib haxe-jsfl
+-D jsfl_mergence
+
+--next
+
 -js deploy/lib/FrameAnimationImport.jsfl
 -main FrameAnimationImport
 -cp src/jsfl

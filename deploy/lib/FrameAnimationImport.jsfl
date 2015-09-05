@@ -1,13 +1,13 @@
 (function ($hx_exports) { "use strict";
-var AssetsLoader = function(document,frameAnimationExportFolerURI,directoryStructure) {
+var AssetsImport = function(document,frameAnimationExportFolerURI,directoryStructure) {
 	this.document = document;
 	this.library = document.library;
 	this.frameAnimationExportFolerURI = frameAnimationExportFolerURI;
 	this.directoryStructure = directoryStructure;
 	this.assetsDirectoryPath = [frameAnimationExportFolerURI,"assets"].join("/");
 };
-AssetsLoader.__name__ = true;
-AssetsLoader.prototype = {
+AssetsImport.__name__ = true;
+AssetsImport.prototype = {
 	execute: function() {
 		this.roop(this.directoryStructure,"");
 	}
@@ -15,7 +15,7 @@ AssetsLoader.prototype = {
 		var relativeDirectoryPath;
 		if(directory.name == "") relativeDirectoryPath = parentRelativeDirectoryPath; else relativeDirectoryPath = [parentRelativeDirectoryPath,directory.name].join("/");
 		var directoryPath = this.assetsDirectoryPath + relativeDirectoryPath;
-		var folderPath = "frame_animation_export" + relativeDirectoryPath;
+		var folderPath = ["frame_animation_export","assets"].join("/") + relativeDirectoryPath;
 		var bitmapFolderPath = [folderPath,"_bitmap"].join("/");
 		this.createFolder(folderPath);
 		this.createFolder(bitmapFolderPath);
@@ -52,85 +52,151 @@ AssetsLoader.prototype = {
 		}
 	}
 };
-var FrameAnimationImport = $hx_exports.FrameAnimationImport = function() {
+var FrameAnimationImport = $hx_exports.FrameAnimationImport = function(layerMergence) {
 	if(jsfl.Lib.fl.getDocumentDOM() == null) return;
 	jsfl.Lib.fl.trace("--- FrameAnimationImport ---");
 	var frameAnimationExportFolerURI = jsfl.Lib.fl.browseForFolderURL("Select " + "frame_animation_export" + ".");
 	if(frameAnimationExportFolerURI == null) return;
-	var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
-	if(directoryStructure == null) {
-		jsfl.Lib.fl.trace("not found: " + [frameAnimationExportFolerURI,"json","directory","default" + ".json"].join("/") + "}}");
+	var information = JsonReader.getInformation(frameAnimationExportFolerURI);
+	if(information == null) {
+		jsfl.Lib.fl.trace("not found: " + [frameAnimationExportFolerURI,"json","info" + ".json"].join("/") + "}}");
 		return;
 	}
+	var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
 	var document = jsfl.Lib.fl.getDocumentDOM();
-	var assetsLoader = new AssetsLoader(document,frameAnimationExportFolerURI,directoryStructure);
-	assetsLoader.execute();
+	var assetsImport = new AssetsImport(document,frameAnimationExportFolerURI,directoryStructure);
+	assetsImport.execute();
 	var layerStructure = JsonReader.getLayerStructure(frameAnimationExportFolerURI);
-	var test = new Test(document,layerStructure);
-	test.execute();
+	var layerIndex = JsonReader.getLayerIndex(frameAnimationExportFolerURI);
+	var movieClipCreation = new MovieClipCreation(information,document,layerStructure,layerIndex);
+	movieClipCreation.execute();
+	if(layerMergence) LayerMargence.execute(document);
+	jsfl.Lib.fl.trace("finish");
 };
 FrameAnimationImport.__name__ = true;
 FrameAnimationImport.main = function() {
 };
 var JsonReader = function() { };
 JsonReader.__name__ = true;
+JsonReader.getInformation = function(frameAnimationExportFolerURI) {
+	var jsonURI = [frameAnimationExportFolerURI,"json","info" + ".json"].join("/");
+	return JsonReader.read(jsonURI);
+};
 JsonReader.getDirectoryStruture = function(frameAnimationExportFolerURI) {
-	var jsonURI = [frameAnimationExportFolerURI,"json","directory","default" + ".json"].join("/");
-	var jsonString = FLfile.read(jsonURI);
-	if(jsonString == null) return null;
-	var directoryStructure = js.Lib["eval"](["(",jsonString,")"].join(""));
-	return directoryStructure;
+	var jsonURI = [frameAnimationExportFolerURI,"json","directory","structure" + ".json"].join("/");
+	return JsonReader.read(jsonURI);
 };
 JsonReader.getLayerStructure = function(frameAnimationExportFolerURI) {
-	var jsonURI = [frameAnimationExportFolerURI,"json","layer","default" + ".json"].join("/");
+	var jsonURI = [frameAnimationExportFolerURI,"json","layer","structure" + ".json"].join("/");
+	return JsonReader.read(jsonURI);
+};
+JsonReader.getLayerIndex = function(frameAnimationExportFolerURI) {
+	var jsonURI = [frameAnimationExportFolerURI,"json","layer","index" + ".json"].join("/");
+	return JsonReader.read(jsonURI);
+};
+JsonReader.read = function(jsonURI) {
 	var jsonString = FLfile.read(jsonURI);
 	if(jsonString == null) return null;
-	var layerStructure = js.Lib["eval"](["(",jsonString,")"].join(""));
-	return layerStructure;
+	return js.Lib["eval"](["(",jsonString,")"].join(""));
 };
-var Std = function() { };
-Std.__name__ = true;
-Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
+var LayerMargence = function() { };
+LayerMargence.__name__ = true;
+LayerMargence.execute = function(document) {
+	var timeline = document.getTimeline();
+	if(timeline.layerCount <= 1) return;
+	var maxLayerIndex = timeline.layerCount - 1;
+	var _g1 = 0;
+	var _g = timeline.frameCount;
+	while(_g1 < _g) {
+		var frameIndex = _g1++;
+		timeline.currentFrame = frameIndex;
+		document.selectAll();
+		document.clipCut();
+		timeline.currentLayer = maxLayerIndex;
+		document.clipPaste(true);
+	}
+	var _g2 = 0;
+	while(_g2 < maxLayerIndex) {
+		var i = _g2++;
+		timeline.deleteLayer(0);
+	}
 };
-var Test = function(document,layerStructure) {
+var MovieClipCreation = function(information,document,layerStructure,layerIndex) {
+	this.layerIndex = layerIndex;
+	this.information = information;
 	this.layerStructure = layerStructure;
 	this.document = document;
 	this.library = document.library;
 };
-Test.__name__ = true;
-Test.prototype = {
+MovieClipCreation.__name__ = true;
+MovieClipCreation.prototype = {
 	execute: function() {
-		var psdFileName = "test_movieclip";
-		this.library.addNewItem(jsfl.ItemType.MOVIE_CLIP,psdFileName);
+		this.createMovieClip();
+		this.createLayerFrame();
+		this.putElement();
+	}
+	,createMovieClip: function() {
+		var psdFileName = this.information.filename.split(".psd")[0];
+		var movieClipPath = ["frame_animation_export",psdFileName].join("/");
+		this.library.addNewItem(jsfl.ItemType.MOVIE_CLIP,movieClipPath);
 		this.library.editItem();
-		var timeline = this.document.getTimeline();
+		this.timeline = this.document.getTimeline();
+	}
+	,createLayerFrame: function() {
+		var totalFrames = this.layerStructure.length - 1;
+		this.timeline.insertFrames(totalFrames,true);
+		var _g = 0;
+		var _g1 = this.layerIndex;
+		while(_g < _g1.length) {
+			var path = _g1[_g];
+			++_g;
+			this.timeline.addNewLayer(path,jsfl.LayerType.NORMAL,false);
+		}
+		var _g11 = 0;
+		var _g2 = this.timeline.layerCount;
+		while(_g11 < _g2) {
+			var i = _g11++;
+			this.timeline.currentLayer = i;
+			var _g21 = 0;
+			while(_g21 < totalFrames) {
+				var frameIndex = _g21++;
+				this.timeline.insertKeyframe(frameIndex);
+			}
+		}
+		this.timeline.deleteLayer(0);
+	}
+	,putElement: function() {
 		var _g1 = 0;
 		var _g = this.layerStructure.length;
 		while(_g1 < _g) {
 			var frameIndex = _g1++;
+			this.timeline.currentFrame = frameIndex;
 			var photoshopLayerSet = this.layerStructure[frameIndex];
-			timeline.selectAllFrames();
-			timeline.insertKeyframe(frameIndex);
 			var _g3 = 0;
 			var _g2 = photoshopLayerSet.length;
 			while(_g3 < _g2) {
 				var elementIndex = _g3++;
 				var photoshopLayer = photoshopLayerSet[elementIndex];
-				var layerIndexSet = timeline.findLayerIndex(photoshopLayer.name);
-				var layerIndex;
-				if(layerIndexSet == null) layerIndex = timeline.addNewLayer(photoshopLayer.name,jsfl.LayerType.NORMAL,false); else layerIndex = layerIndexSet[0];
-				timeline.currentLayer = layerIndex;
-				var layer = timeline.layers[layerIndex];
-				var libraryItemPath = ["frame_animation_export",photoshopLayer.directory,photoshopLayer.name].join("/");
+				var layerIndex = this.timeline.findLayerIndex(photoshopLayer.path)[0];
+				this.timeline.currentLayer = layerIndex;
+				var libraryItemPath = this.getLibraryItemPath(photoshopLayer);
 				this.library.addItemToDocument({ x : 0, y : 0},libraryItemPath);
-				var element = layer.frames[frameIndex].elements[elementIndex];
-				element.x = photoshopLayer.x;
-				element.y = photoshopLayer.y;
-				return;
+				this.document.setInstanceAlpha(photoshopLayer.opacity);
+				this.document.setElementProperty("x",photoshopLayer.x);
+				this.document.setElementProperty("y",photoshopLayer.y);
 			}
 		}
 	}
+	,getLibraryItemPath: function(photoshopLayer) {
+		var pathSet;
+		if(photoshopLayer.directory == "") pathSet = ["frame_animation_export","assets",photoshopLayer.name]; else pathSet = ["frame_animation_export","assets",photoshopLayer.directory,photoshopLayer.name];
+		return pathSet.join("/");
+	}
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js.Boot.__string_rec(s,"");
 };
 var haxe = {};
 haxe.Log = function() { };
@@ -297,14 +363,20 @@ jsfl._TweenType.TweenType_Impl_.__name__ = true;
 var lib = {};
 lib.FileDirectory = function() { };
 lib.FileDirectory.__name__ = true;
-lib.FileDirectory.getDirectoryStructureDefaultFilePath = function(frameAnimationExportFolerURI) {
-	return [frameAnimationExportFolerURI,"json","directory","default" + ".json"].join("/");
+lib.FileDirectory.getDirectoryStructureFilePath = function(frameAnimationExportFolerURI) {
+	return [frameAnimationExportFolerURI,"json","directory","structure" + ".json"].join("/");
 };
 lib.FileDirectory.getAssetsDirectoryPath = function(frameAnimationExportFolerURI) {
 	return [frameAnimationExportFolerURI,"assets"].join("/");
 };
-lib.FileDirectory.getLayerStructureDefaultFilePath = function(frameAnimationExportFolerURI) {
-	return [frameAnimationExportFolerURI,"json","layer","default" + ".json"].join("/");
+lib.FileDirectory.getLayerStructureFilePath = function(frameAnimationExportFolerURI) {
+	return [frameAnimationExportFolerURI,"json","layer","structure" + ".json"].join("/");
+};
+lib.FileDirectory.getLayerIndexFilePath = function(frameAnimationExportFolerURI) {
+	return [frameAnimationExportFolerURI,"json","layer","index" + ".json"].join("/");
+};
+lib.FileDirectory.getInfomationFilePath = function(frameAnimationExportFolerURI) {
+	return [frameAnimationExportFolerURI,"json","info" + ".json"].join("/");
 };
 String.__name__ = true;
 Array.__name__ = true;
@@ -410,15 +482,16 @@ lib.FileDirectory.ROOT_DIRECTORY = "";
 lib.FileDirectory.PATH_COLUMN = "/";
 lib.FileDirectory.IMAGE_EXTENSION = ".png";
 lib.FileDirectory.JSON_EXTENSION = ".json";
+lib.FileDirectory.PSD_EXTENSION = ".psd";
 lib.FileDirectory.OUTPUT_DIRECTORY = "frame_animation_export";
 lib.FileDirectory.ASSETS_DIRECTORY = "assets";
 lib.FileDirectory.JSON_DIRECTORY = "json";
+lib.FileDirectory.INFOMATION_FILE = "info" + ".json";
 lib.FileDirectory.JSON_LAYER_STRUCTURE_DIRECTORY = "layer";
-lib.FileDirectory.LAYER_STRUCTURE_DEFAULT_FILE = "default" + ".json";
-lib.FileDirectory.LAYER_STRUCTURE_ARRAY_FILE = "array" + ".json";
+lib.FileDirectory.LAYER_STRUCTURE_FILE = "structure" + ".json";
+lib.FileDirectory.LAYER_INDEX_FILE = "index" + ".json";
 lib.FileDirectory.JSON_DIRECTORY_STRUCTURE_DIRECTORY = "directory";
-lib.FileDirectory.DIRECTORY_STRUCTURE_DEFAULT_FILE = "default" + ".json";
-lib.FileDirectory.DIRECTORY_STRUCTURE_PATH_FILE = "path" + ".json";
+lib.FileDirectory.DIRECTORY_STRUCTURE_FILE = "structure" + ".json";
 lib.FileDirectory.BITMAP_DIRECTORY = "_bitmap";
 FrameAnimationImport.main();
 })(typeof window != "undefined" ? window : exports);
