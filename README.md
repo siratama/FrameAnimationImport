@@ -7,5 +7,5 @@
 
 ### Recommend jsfl
 
-[BitmapSmoothCut](https://github.com/siratama/BitmapSmoothCut)
-[FrameInsertEveryEachKeyFrame](https://github.com/siratama/FrameInsertEveryEachKeyFrame)
+* [BitmapSmoothCut](https://github.com/siratama/BitmapSmoothCut)
+* [FrameInsertEveryEachKeyFrame](https://github.com/siratama/FrameInsertEveryEachKeyFrame)
