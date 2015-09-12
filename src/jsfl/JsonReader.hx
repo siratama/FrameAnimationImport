@@ -31,7 +31,7 @@ class JsonReader
 	private static function read(jsonURI)
 	{
 		var jsonString = FLfile.read(jsonURI);
-		if(jsonString == null){
+		if(jsonString == null || jsonString == ""){
 			return null;
 		}
 		return js.Lib.eval(["(", jsonString, ")"].join(""));

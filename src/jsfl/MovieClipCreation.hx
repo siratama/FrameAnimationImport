@@ -11,17 +11,15 @@ import jsfl.Document;
 
 class MovieClipCreation
 {
-	private var information:Information;
 	private var document:Document;
 	private var library:Library;
 	private var layerStructure:Array<Array<PhotoshopLayer>>;
 	private var layerIndex:Array<String>;
 	private var timeline:Timeline;
 
-	public function new(information:Information, document:Document, layerStructure:Array<Array<PhotoshopLayer>>, layerIndex:Array<String>)
+	public function new(document:Document, layerStructure:Array<Array<PhotoshopLayer>>, layerIndex:Array<String>)
 	{
 		this.layerIndex = layerIndex;
-		this.information = information;
 		this.layerStructure = layerStructure;
 		this.document = document;
 
@@ -35,8 +33,7 @@ class MovieClipCreation
 	}
 	private function createMovieClip()
 	{
-		var psdFileName = information.filename.split(FileDirectory.PSD_EXTENSION)[0];
-		var movieClipPath = [FileDirectory.OUTPUT_DIRECTORY, psdFileName].join(FileDirectory.PATH_COLUMN);
+		var movieClipPath = [ImportFolder.instance.name, ImportFolder.instance.movieclipName].join(FileDirectory.PATH_COLUMN);
 		library.addNewItem(ItemType.MOVIE_CLIP, movieClipPath);
 		library.editItem();
 		timeline = document.getTimeline();
@@ -85,12 +82,12 @@ class MovieClipCreation
 	{
 		var pathSet = (photoshopLayer.directory == FileDirectory.ROOT_DIRECTORY) ?
 			[
-				FileDirectory.OUTPUT_DIRECTORY,
+				ImportFolder.instance.name,
 				FileDirectory.ASSETS_DIRECTORY,
 				photoshopLayer.name
 			] :
 			[
-				FileDirectory.OUTPUT_DIRECTORY,
+				ImportFolder.instance.name,
 				FileDirectory.ASSETS_DIRECTORY,
 				photoshopLayer.directory,
 				photoshopLayer.name

@@ -36,7 +36,7 @@ class AssetsImport
 
 		var directoryPath:String = assetsDirectoryPath + relativeDirectoryPath;
 
-		var folderPath = [FileDirectory.OUTPUT_DIRECTORY, FileDirectory.ASSETS_DIRECTORY].join(FileDirectory.PATH_COLUMN) + relativeDirectoryPath;
+		var folderPath = [ImportFolder.instance.name, FileDirectory.ASSETS_DIRECTORY].join(FileDirectory.PATH_COLUMN) + relativeDirectoryPath;
 		var bitmapFolderPath = [folderPath, FileDirectory.BITMAP_DIRECTORY].join(FileDirectory.PATH_COLUMN);
 		createFolder(folderPath);
 		createFolder(bitmapFolderPath);

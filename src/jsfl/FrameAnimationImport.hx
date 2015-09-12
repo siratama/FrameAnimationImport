@@ -34,13 +34,15 @@ class FrameAnimationImport
 		var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
 
 		var document = fl.getDocumentDOM();
+		ImportFolder.instance.initialize(document.library, information.filename);
+
 		var assetsImport = new AssetsImport(document, frameAnimationExportFolerURI, directoryStructure);
 		assetsImport.execute();
 
 		var layerStructure = JsonReader.getLayerStructure(frameAnimationExportFolerURI);
 		var layerIndex = JsonReader.getLayerIndex(frameAnimationExportFolerURI);
 
-		var movieClipCreation = new MovieClipCreation(information, document, layerStructure, layerIndex);
+		var movieClipCreation = new MovieClipCreation(document, layerStructure, layerIndex);
 		movieClipCreation.execute();
 
 		if(layerMergence)

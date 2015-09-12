@@ -15,7 +15,7 @@ AssetsImport.prototype = {
 		var relativeDirectoryPath;
 		if(directory.name == "") relativeDirectoryPath = parentRelativeDirectoryPath; else relativeDirectoryPath = [parentRelativeDirectoryPath,directory.name].join("/");
 		var directoryPath = this.assetsDirectoryPath + relativeDirectoryPath;
-		var folderPath = ["frame_animation_export","assets"].join("/") + relativeDirectoryPath;
+		var folderPath = [(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).name,"assets"].join("/") + relativeDirectoryPath;
 		var bitmapFolderPath = [folderPath,"_bitmap"].join("/");
 		this.createFolder(folderPath);
 		this.createFolder(bitmapFolderPath);
@@ -64,11 +64,12 @@ var FrameAnimationImport = $hx_exports.FrameAnimationImport = function(layerMerg
 	}
 	var directoryStructure = JsonReader.getDirectoryStruture(frameAnimationExportFolerURI);
 	var document = jsfl.Lib.fl.getDocumentDOM();
+	(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).initialize(document.library,information.filename);
 	var assetsImport = new AssetsImport(document,frameAnimationExportFolerURI,directoryStructure);
 	assetsImport.execute();
 	var layerStructure = JsonReader.getLayerStructure(frameAnimationExportFolerURI);
 	var layerIndex = JsonReader.getLayerIndex(frameAnimationExportFolerURI);
-	var movieClipCreation = new MovieClipCreation(information,document,layerStructure,layerIndex);
+	var movieClipCreation = new MovieClipCreation(document,layerStructure,layerIndex);
 	movieClipCreation.execute();
 	if(layerMergence) LayerMargence.execute(document);
 	jsfl.Lib.fl.trace("finish");
@@ -76,6 +77,29 @@ var FrameAnimationImport = $hx_exports.FrameAnimationImport = function(layerMerg
 FrameAnimationImport.__name__ = true;
 FrameAnimationImport.main = function() {
 	new FrameAnimationImport(false);
+};
+var ImportFolder = function() {
+};
+ImportFolder.__name__ = true;
+ImportFolder.get_instance = function() {
+	if(ImportFolder.instance == null) return ImportFolder.instance = new ImportFolder(); else return ImportFolder.instance;
+};
+ImportFolder.prototype = {
+	initialize: function(library,filename) {
+		var psdName = filename.split(".psd")[0];
+		this.movieclipName = psdName;
+		var count = 0;
+		while(true) {
+			var checkFolderName;
+			if(count == 0) checkFolderName = psdName; else checkFolderName = psdName + (count == null?"null":"" + count);
+			if(!library.itemExists(checkFolderName)) {
+				library.newFolder(checkFolderName);
+				this.name = checkFolderName;
+				break;
+			}
+			count++;
+		}
+	}
 };
 var JsonReader = function() { };
 JsonReader.__name__ = true;
@@ -97,7 +121,7 @@ JsonReader.getLayerIndex = function(frameAnimationExportFolerURI) {
 };
 JsonReader.read = function(jsonURI) {
 	var jsonString = FLfile.read(jsonURI);
-	if(jsonString == null) return null;
+	if(jsonString == null || jsonString == "") return null;
 	return js.Lib["eval"](["(",jsonString,")"].join(""));
 };
 var LayerMargence = function() { };
@@ -122,9 +146,8 @@ LayerMargence.execute = function(document) {
 		timeline.deleteLayer(0);
 	}
 };
-var MovieClipCreation = function(information,document,layerStructure,layerIndex) {
+var MovieClipCreation = function(document,layerStructure,layerIndex) {
 	this.layerIndex = layerIndex;
-	this.information = information;
 	this.layerStructure = layerStructure;
 	this.document = document;
 	this.library = document.library;
@@ -137,8 +160,7 @@ MovieClipCreation.prototype = {
 		this.putElement();
 	}
 	,createMovieClip: function() {
-		var psdFileName = this.information.filename.split(".psd")[0];
-		var movieClipPath = ["frame_animation_export",psdFileName].join("/");
+		var movieClipPath = [(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).name,(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).movieclipName].join("/");
 		this.library.addNewItem(jsfl.ItemType.MOVIE_CLIP,movieClipPath);
 		this.library.editItem();
 		this.timeline = this.document.getTimeline();
@@ -190,7 +212,7 @@ MovieClipCreation.prototype = {
 	}
 	,getLibraryItemPath: function(photoshopLayer) {
 		var pathSet;
-		if(photoshopLayer.directory == "") pathSet = ["frame_animation_export","assets",photoshopLayer.name]; else pathSet = ["frame_animation_export","assets",photoshopLayer.directory,photoshopLayer.name];
+		if(photoshopLayer.directory == "") pathSet = [(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).name,"assets",photoshopLayer.name]; else pathSet = [(ImportFolder.instance == null?ImportFolder.instance = new ImportFolder():ImportFolder.instance).name,"assets",photoshopLayer.directory,photoshopLayer.name];
 		return pathSet.join("/");
 	}
 };
