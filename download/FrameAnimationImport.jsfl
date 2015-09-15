@@ -86,12 +86,11 @@ ImportFolder.get_instance = function() {
 };
 ImportFolder.prototype = {
 	initialize: function(library,filename) {
-		var psdName = filename.split(".psd")[0];
-		this.movieclipName = psdName;
+		this.movieclipName = filename;
 		var count = 0;
 		while(true) {
 			var checkFolderName;
-			if(count == 0) checkFolderName = psdName; else checkFolderName = psdName + (count == null?"null":"" + count);
+			if(count == 0) checkFolderName = filename; else checkFolderName = filename + (count == null?"null":"" + count);
 			if(!library.itemExists(checkFolderName)) {
 				library.newFolder(checkFolderName);
 				this.name = checkFolderName;
@@ -195,13 +194,16 @@ MovieClipCreation.prototype = {
 			var frameIndex = _g1++;
 			this.timeline.currentFrame = frameIndex;
 			var photoshopLayerSet = this.layerStructure[frameIndex];
+			var beforeLayerIndex = null;
 			var _g3 = 0;
 			var _g2 = photoshopLayerSet.length;
 			while(_g3 < _g2) {
-				var elementIndex = _g3++;
-				var photoshopLayer = photoshopLayerSet[elementIndex];
-				var layerIndex = this.timeline.findLayerIndex(photoshopLayer.path)[0];
+				var photoshopLayerIndex = _g3++;
+				var photoshopLayer = photoshopLayerSet[photoshopLayerIndex];
+				var layerIndexSet = this.timeline.findLayerIndex(photoshopLayer.path);
+				var layerIndex = this.getLayerIndex(beforeLayerIndex,layerIndexSet);
 				this.timeline.currentLayer = layerIndex;
+				beforeLayerIndex = layerIndex;
 				var libraryItemPath = this.getLibraryItemPath(photoshopLayer);
 				this.library.addItemToDocument({ x : 0, y : 0},libraryItemPath);
 				this.document.setInstanceAlpha(photoshopLayer.opacity);
@@ -209,6 +211,18 @@ MovieClipCreation.prototype = {
 				this.document.setElementProperty("y",photoshopLayer.y);
 			}
 		}
+	}
+	,getLayerIndex: function(beforeLayerIndex,layerIndexSet) {
+		if(beforeLayerIndex == null || layerIndexSet.length == 1) return layerIndexSet[0];
+		var layerIndex = 0;
+		var _g1 = 0;
+		var _g = layerIndexSet.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			layerIndex = layerIndexSet[i];
+			if(layerIndex > beforeLayerIndex) break;
+		}
+		return layerIndex;
 	}
 	,getLibraryItemPath: function(photoshopLayer) {
 		var pathSet;

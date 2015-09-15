@@ -62,12 +62,16 @@ class MovieClipCreation
 			timeline.currentFrame = frameIndex;
 			var photoshopLayerSet = layerStructure[frameIndex];
 
-			for (elementIndex in 0...photoshopLayerSet.length)
+			var beforeLayerIndex:Null<Int> = null;
+			for (photoshopLayerIndex in 0...photoshopLayerSet.length)
 			{
-				var photoshopLayer = photoshopLayerSet[elementIndex];
+				var photoshopLayer = photoshopLayerSet[photoshopLayerIndex];
 
-				var layerIndex = timeline.findLayerIndex(photoshopLayer.path)[0];
+				var layerIndexSet = timeline.findLayerIndex(photoshopLayer.path);
+				var layerIndex:Int = getLayerIndex(beforeLayerIndex, layerIndexSet);
+
 				timeline.currentLayer = layerIndex;
+				beforeLayerIndex = layerIndex;
 
 				var libraryItemPath = getLibraryItemPath(photoshopLayer);
 				library.addItemToDocument({x:0, y:0}, libraryItemPath);
@@ -78,6 +82,21 @@ class MovieClipCreation
 			}
 		}
 	}
+
+	private function getLayerIndex(beforeLayerIndex:Null<Int>, layerIndexSet:Array<Int>):Int
+	{
+		if(beforeLayerIndex == null || layerIndexSet.length == 1)
+			return layerIndexSet[0];
+
+		var layerIndex = 0;
+		for(i in 0...layerIndexSet.length)
+		{
+			layerIndex = layerIndexSet[i];
+			if(layerIndex > beforeLayerIndex) break;
+		}
+		return layerIndex;
+	}
+
 	private function getLibraryItemPath(photoshopLayer:PhotoshopLayer):String
 	{
 		var pathSet = (photoshopLayer.directory == FileDirectory.ROOT_DIRECTORY) ?

@@ -13,13 +13,12 @@ class ImportFolder
 
 	public function initialize(library:Library, filename:String)
 	{
-		var psdName = filename.split(FileDirectory.PSD_EXTENSION)[0];
-		movieclipName = psdName;
+		movieclipName = filename;
 
 		var count = 0;
 		while(true)
 		{
-			var checkFolderName = (count == 0) ? psdName: psdName + Std.string(count);
+			var checkFolderName = (count == 0) ? filename: filename + Std.string(count);
 			if(!library.itemExists(checkFolderName)){
 				library.newFolder(checkFolderName);
 				this.name = checkFolderName;
