@@ -61,15 +61,6 @@ button {
   }
 }
 
-input {
-  background: #a0a0a0;
-  border: 1px solid #000000;
-  font-size: 11px;
-  padding-left: 4px;
-  box-sizing: border-box;
-  width: 100%;
-}
-
 #button {
   border-top: 1px groove #555555;
   padding-top: 10px;
@@ -77,26 +68,11 @@ input {
   position: relative;
 }
 
-$input_title_width: 50px;
-dt {
-  clear: both;
+.button{
   float: left;
-  width: $input_title_width;
-}
-dd {
-  margin-left: $input_title_width;
-  margin-bottom: 5px;
 }
 
 .clear_both {
   clear: both;
-}
-
-.message{
-  position: absolute;
-  left: 90px;
-  top: 12px;
-  display: none;
-  color: #f4cc41;
 }
 
