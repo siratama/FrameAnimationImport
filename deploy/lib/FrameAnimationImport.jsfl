@@ -71,7 +71,7 @@ var FrameAnimationImport = $hx_exports.FrameAnimationImport = function(layerMerg
 	var layerIndex = JsonReader.getLayerIndex(frameAnimationExportFolerURI);
 	var movieClipCreation = new MovieClipCreation(document,layerStructure,layerIndex);
 	movieClipCreation.execute();
-	if(layerMergence) LayerMargence.execute(document);
+	if(layerMergence) LayerMergence.execute(document,information.filename);
 	jsfl.Lib.fl.trace("finish");
 };
 FrameAnimationImport.__name__ = true;
@@ -122,9 +122,9 @@ JsonReader.read = function(jsonURI) {
 	if(jsonString == null || jsonString == "") return null;
 	return js.Lib["eval"](["(",jsonString,")"].join(""));
 };
-var LayerMargence = function() { };
-LayerMargence.__name__ = true;
-LayerMargence.execute = function(document) {
+var LayerMergence = function() { };
+LayerMergence.__name__ = true;
+LayerMergence.execute = function(document,filename) {
 	var timeline = document.getTimeline();
 	if(timeline.layerCount <= 1) return;
 	var maxLayerIndex = timeline.layerCount - 1;
@@ -143,6 +143,7 @@ LayerMargence.execute = function(document) {
 		var i = _g2++;
 		timeline.deleteLayer(0);
 	}
+	timeline.layers[0].name = filename;
 };
 var MovieClipCreation = function(document,layerStructure,layerIndex) {
 	this.layerIndex = layerIndex;

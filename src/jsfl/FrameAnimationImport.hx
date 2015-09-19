@@ -46,7 +46,7 @@ class FrameAnimationImport
 		movieClipCreation.execute();
 
 		if(layerMergence)
-			LayerMargence.execute(document);
+			LayerMergence.execute(document, information.filename);
 
 		Lib.fl.trace("finish");
 	}

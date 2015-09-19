@@ -10,10 +10,6 @@ class ExtensionIndex
 	private static inline var JSFL_CLASS_NAME = "FrameAnimationImport";
 	private static inline var JSFL = JSFL_CLASS_NAME + ".jsfl";
 
-	private var folderCopyNameRuleElement:JQuery;
-	private var fileCopyNameRuleElement:JQuery;
-	private static inline var SLIDE_SPEED = "fast";
-
 	public static function main(){
 		new ExtensionIndex();
 	}
@@ -30,7 +26,7 @@ class ExtensionIndex
 		});
 
 		var runMergeButtonElement = new JQuery("#run_merge");
-		runButtonElement.mousedown(function(event){
+		runMergeButtonElement.mousedown(function(event){
 			run(true);
 		});
 	}

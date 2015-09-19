@@ -1,7 +1,5 @@
 (function () { "use strict";
 var $estr = function() { return js.Boot.__string_rec(this,''); };
-var Common = function() { };
-Common.__name__ = true;
 var ExtensionIndex = function() {
 	window.addEventListener("load",$bind(this,this.initialize));
 };
@@ -13,30 +11,17 @@ ExtensionIndex.prototype = {
 	initialize: function(event) {
 		var _g = this;
 		this.csInterfaceUtil = flash_extension.csinterface.CSInterfaceUtil.create();
-		var copyNameRuleElement = new $("#copy_name_rule");
-		this.folderCopyNameRuleElement = new $(".folder",copyNameRuleElement);
-		this.folderCopyNameRuleElement.val("_copy");
-		this.fileCopyNameRuleElement = new $(".file",copyNameRuleElement);
-		this.setTitleBar("copy_name_rule_title",copyNameRuleElement);
 		var runButtonElement = new $("#run");
 		runButtonElement.mousedown(function(event1) {
-			_g.run();
+			_g.run(false);
+		});
+		var runMergeButtonElement = new $("#run_merge");
+		runMergeButtonElement.mousedown(function(event2) {
+			_g.run(true);
 		});
 	}
-	,setTitleBar: function(titleBarId,slideElement) {
-		var titleElement = new $("#" + titleBarId);
-		titleElement.mousedown(function(event) {
-			if(slideElement["is"](":hidden")) slideElement.slideDown("fast"); else slideElement.slideUp("fast");
-		});
-	}
-	,run: function() {
-		var folderCopyName = this.folderCopyNameRuleElement.val();
-		if(folderCopyName == "") {
-			this.csInterfaceUtil.flTrace("Set folder copy name rule.");
-			return;
-		}
-		var fileCopyName = this.fileCopyNameRuleElement.val();
-		this.csInterfaceUtil.evalScript("new " + "LibraryItemDuplication" + "(\"" + Std.string(folderCopyName) + "\", \"" + Std.string(fileCopyName) + "\");");
+	,run: function(layerMergence) {
+		this.csInterfaceUtil.evalScript("new " + "FrameAnimationImport" + "(" + (layerMergence == null?"null":"" + layerMergence) + ");");
 	}
 };
 var Std = function() { };
@@ -186,11 +171,8 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.__name__ = true;
 Array.__name__ = true;
 haxe.Log.trace = jsfl.Boot.trace;
-Common.DEFALUT_FOLDER_COPY_NAME = "_copy";
-Common.PATH_CLUM = "/";
-ExtensionIndex.JSFL_CLASS_NAME = "LibraryItemDuplication";
-ExtensionIndex.JSFL = "LibraryItemDuplication" + ".jsfl";
-ExtensionIndex.SLIDE_SPEED = "fast";
+ExtensionIndex.JSFL_CLASS_NAME = "FrameAnimationImport";
+ExtensionIndex.JSFL = "FrameAnimationImport" + ".jsfl";
 jsfl.EventType.DOCUMENT_NEW = "documentNew";
 jsfl.EventType.DOCUMENT_OPENED = "documentOpened";
 jsfl.EventType.DOCUMENT_CLOSED = "documentClosed";

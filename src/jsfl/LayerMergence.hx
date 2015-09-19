@@ -1,9 +1,9 @@
 package ;
 import jsfl.Document;
 import jsfl.Timeline;
-class LayerMargence
+class LayerMergence
 {
-	public static function execute(document:Document)
+	public static function execute(document:Document, filename:String)
 	{
 		var timeline = document.getTimeline();
 		if(timeline.layerCount <= 1) return;
@@ -24,5 +24,7 @@ class LayerMargence
 		{
 			timeline.deleteLayer(0);
 		}
+
+		timeline.layers[0].name = filename;
 	}
 }
