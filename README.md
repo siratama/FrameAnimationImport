@@ -1,18 +1,20 @@
 # FrameAnimationImport
 =======
 
-![FrameAnimationImport Panel](img/image.png)
+Document Language [English] | [[Japanese]](README_jp.md)
 
-FrameAnimationImport は Flash Pro CC 用 拡張パネルです。
-FrameAnimationExport から出力したデータを読み込み、MovieClip として再現します。
+![FrameAnimationImport Panel](assets/main.png)
+
+FrameAnimationImport is an extension panel for Flash Pro CC.
+This reads FrameAnimationExport output data and convert to MovieClip.
 
 * [FrameAnimationExport](https://github.com/siratama/FrameAnimationExport)
 
 ## Movie
-## 紹介動画
 
 [introduction movie](http://)
 
+---
 ## Download
 
 ### zxp file (for Flash Pro CC)
@@ -22,9 +24,6 @@ FrameAnimationExport から出力したデータを読み込み、MovieClip と�
 This can be used by Flash CC 13.1 or later. In the case of Windows, it can save from a right-click. 
 [Extension Manager Command Line tool(ExManCmd)](https://www.adobeexchange.com/resources/28) is required in order to install. 
 
-Flash CC 13.1 以降のバージョンで利用可能です。Windows の場合、右クリックから「リンク先のコンテンツを保存」を選択で保存できます。
-インストールには別途 [Extension Manager Command Line tool(ExManCmd)](https://www.adobeexchange.com/resources/28)が必要です。
-
 ### jsfl file (for Flash Pro Any Version)
 
 * [FrameAnimationImport.jsx](https://raw.github.com/siratama/FrameAnimationImport/master/download/FrameAnimationImport.jsx)
@@ -33,35 +32,34 @@ Flash CC 13.1 以降のバージョンで利用可能です。Windows の場合�
 ## Etc Download
 
 ### Recommend jsfl
-### 併用を推奨する jsfl
 
 * [BitmapSmoothCut](https://github.com/siratama/BitmapSmoothCut)
 * [FrameInsertEveryEachKeyFrame](https://github.com/siratama/FrameInsertEveryEachKeyFrame)
 
+---
 ## How to use
-## 使い方
 
-図
+![FrameAnimationImport Panel](assets/panel.png)
 
-* RUN: Photoshop のレイヤー構造で Flash Pro CC 内にレイヤーが作成される
-* RUN(merge layer): 作成されるレイヤーは一つ
+* RUN: It's made by the layer structure of Photoshop.
+* RUN(merge layer): A made layer is one. (Recommendation) 
 
-どちらかの RUN ボタン押下後、FrameAnimationExport で出力されたフォルダを選択します。
+After RUN button push down, you select a FrameAnimationExport output folder.
 
+![ ](assets/select_export_folder.png)
+
+---
 ## FAQ
 
-### Photoshop タイムラインフレームアニメーション 各フレームのディレイ値で設定したままのアニメーション表示になるようにしたい
+### I'd like to make the delay value of each frame of the Photoshop timeline frame animation applied MovieClip.
 
-Photoshop jsx の制限上、
-FrameAnimationImport で生成される MovieClip はどのフレームも 1 として再現されてしまいます。
+Every frame is 1 in MovieClip made by FrameAnimationImport with a cause of restriction of Photoshop jsx.
+On the other hand you can handle a little by a Photoshop timeline frame adjustment.
 
-これに対して、
-Photoshop タイムライン上でフレームを調整する事で、ある程度の対処が行えます。
+For example the delay value is set as a multiple of 0.05.
+A frame of 0.1 is split into two frames of 0.05.
+An identical frame is two on the Flash Pro CC. That's a frame of (0.05 * 2 = 0.1) seconds.
 
-例えば Photoshop 上で設定するディレイ値は 0.05 の倍数に設定します。
-0.1 のフレームは 0.05 二つのフレームに分割します。
-Flash Pro CC 上では同一のフレームが二つ表示される事になります。
-
-図
+![ ](assets/frame_split.png)
 
 
