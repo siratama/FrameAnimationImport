@@ -12,7 +12,7 @@ FrameAnimationExport から出力したデータを読み込み、MovieClip と�
 
 ## 紹介動画
 
-[introduction movie](http://)
+[introduction movie](https://www.youtube.com/watch?v=CbO2_SfJ2CY)
 
 ---
 ## Download

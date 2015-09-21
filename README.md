@@ -12,7 +12,7 @@ This reads FrameAnimationExport output data and convert to MovieClip.
 
 ## Movie
 
-[introduction movie](http://)
+[introduction movie](https://www.youtube.com/watch?v=CbO2_SfJ2CY)
 
 ---
 ## Download
