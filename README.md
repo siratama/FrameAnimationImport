@@ -26,8 +26,8 @@ This can be used by Flash CC 13.1 or later. In the case of Windows, it can save 
 
 ### jsfl file (for Flash Pro Any Version)
 
-* [FrameAnimationImport.jsx](https://raw.githubusercontent.com/siratama/FrameAnimationImport/master/download/FrameAnimationImport.jsfl)
-* [FrameAnimationImportWithLayerMergence.jsx](https://raw.githubusercontent.com/siratama/FrameAnimationImport/master/download/FrameAnimationImportWithLayerMergence.jsfl)
+* [FrameAnimationImport.jsfl](https://raw.githubusercontent.com/siratama/FrameAnimationImport/master/download/FrameAnimationImport.jsfl)
+* [FrameAnimationImportWithLayerMergence.jsfl](https://raw.githubusercontent.com/siratama/FrameAnimationImport/master/download/FrameAnimationImportWithLayerMergence.jsfl)
 
 ## Etc Download
 
